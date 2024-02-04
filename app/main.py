@@ -15,5 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+print("test")
 app.include_router(auth.router)
 app.include_router(views.router)
