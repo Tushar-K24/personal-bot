@@ -1,10 +1,17 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from fastapi import FastAPI
+from sqlalchemy.schema import MetaData
+
 from app.core import auth
 from app.routes import views
 
-app = FastAPI()
+from app.database.connection import initDB
+
+app: FastAPI = FastAPI()
+db: MetaData = initDB(app)
+
 
 # Set all CORS enabled origins
 app.add_middleware(

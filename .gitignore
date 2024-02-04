@@ -142,3 +142,4 @@ data/*
 volumes/*
 dockerfiles/*
 .github/*
+.vscode/*
