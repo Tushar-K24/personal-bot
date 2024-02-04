@@ -1,0 +1,110 @@
+version: "3.9"
+services:
+  app:
+    restart: unless-stopped
+    env_file:
+      - .env
+    build:
+      context: ./
+      labels:
+        - fnano
+    volumes:
+      - .:/code
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        gunicorn app.main:app --workers 2 \
+        --worker-class uvicorn.workers.UvicornWorker -b $HOST:5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      - database
+      - redis
+
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
+
+  database:
+    image: "postgres:latest"
+    container_name: database
+    restart: always
+    ports:
+      - "54320:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+  # caddy:
+  #   image: caddy:2-alpine
+  #   container_name: caddy
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "$PORT:$PORT"
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+
+  #   depends_on:
+  #     - fnano
+
+  #-------------------------------------Milvus (Vector DB)----------------------------------------------------
+  etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.0
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+
+  minio:
+    container_name: milvus-minio
+    image: minio/minio:RELEASE.2020-12-03T00-03-10Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
+    command: minio server /minio_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  standalone:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.0.2
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+    ports:
+      - "19530:19530"
+    depends_on:
+      - "etcd"
+      - "minio"
+
+networks:
+  default:
+    name: milvus
+#-----------------------------------------------------------------------------------------------------------
+
+volumes:
+  # caddy_data:
+  # caddy_config:
+  database_data:
