@@ -38,3 +38,5 @@ DATABASE_CONFIG.url = URL(
 
 REDIS_IP: str = config("REDIS_IP", cast=str, default="127.0.0.1")
 REDIS_PORT: int = config("REDIS_PORT", cast=int, default=6379)
+
+SERP_API_KEY: str = config("SERP_API_KEY", cast=str, default="")
