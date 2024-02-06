@@ -4,13 +4,18 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.core import config
-from app.main import app
-
-client = TestClient(app)
 
 
 @pytest.fixture(scope="module")
-def api_token():
+def client():
+    from app.app import get_app
+
+    with TestClient(get_app()) as client:
+        yield client
+
+
+@pytest.fixture(scope="module")
+def api_token(client):
     # Get token.
     res = client.post(
         "/token",
@@ -28,7 +33,7 @@ def api_token():
     return f"{token_type} {access_token}"
 
 
-def test_api_a_unauthorized():
+def test_api_a_unauthorized(client):
     """Should return 401."""
 
     # Unauthorized request.
@@ -36,7 +41,7 @@ def test_api_a_unauthorized():
     assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_api_a_invalid_input(api_token):
+def test_api_a_invalid_input(client, api_token):
     """Should return 422."""
 
     # Authorized but should raise 400 error.
@@ -50,7 +55,7 @@ def test_api_a_invalid_input(api_token):
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-def test_api_a_ok(api_token):
+def test_api_a_ok(client, api_token):
     # Successful request.
     response = client.get(
         "/api_a/200",
@@ -65,7 +70,7 @@ def test_api_a_ok(api_token):
         assert isinstance(val, int)
 
 
-def test_api_b_unauthorized():
+def test_api_b_unauthorized(client):
     """Should return 401."""
 
     # Unauthorized request.
@@ -73,7 +78,7 @@ def test_api_b_unauthorized():
     assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_api_b_invalid_input(api_token):
+def test_api_b_invalid_input(client, api_token):
     """Should return 422."""
 
     # Authorized but should raise 400 error.
@@ -87,7 +92,7 @@ def test_api_b_invalid_input(api_token):
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-def test_api_b_ok(api_token):
+def test_api_b_ok(client, api_token):
     # Successful request.
     response = client.get(
         "/api_b/300",

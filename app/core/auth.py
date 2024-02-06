@@ -3,12 +3,11 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
+# from passlib.context import CryptContext
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-
-# from passlib.context import CryptContext
-import bcrypt
 from pydantic import BaseModel
 
 from app.core import config
