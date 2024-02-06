@@ -1,4 +1,5 @@
 from serpapi import GoogleSearch
+
 from ..settings.globals import SERP_API_KEY
 
 

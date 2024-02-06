@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Optional
 
+from sqlalchemy.engine.url import URL
 from starlette.config import Config
 from starlette.datastructures import Secret
-from sqlalchemy.engine.url import URL
 
 from ..models.pydantic.database import DatabaseURL
 

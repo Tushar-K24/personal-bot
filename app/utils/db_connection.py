@@ -1,10 +1,9 @@
 from typing import Optional
 
+from fastapi import FastAPI
+
 # from gino.ext.starlette import Gino
 from gino_starlette import Gino
-from fastapi import FastAPI
-from sqlalchemy.schema import MetaData
-
 
 from ..settings.globals import DATABASE_CONFIG, DB_ECHO
 
