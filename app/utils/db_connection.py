@@ -1,18 +1,24 @@
-from typing import Optional
-
-from fastapi import FastAPI
-
-# from gino.ext.starlette import Gino
-from gino_starlette import Gino
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from ..settings.globals import DATABASE_CONFIG, DB_ECHO
 
 
-def initialize_db(app: Optional[FastAPI] = None) -> Gino:
-    db: Gino = Gino(dsn=DATABASE_CONFIG.url, echo=DB_ECHO)
-    if app:
-        db.init_app(app)
-    return db
+class Base(DeclarativeBase):
+    pass
 
 
-db = initialize_db()
+print(DATABASE_CONFIG.url)  # for debugging
+engine = create_async_engine(DATABASE_CONFIG.url, echo=DB_ECHO)
+SessionMaker = async_sessionmaker(engine)
+
+
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    db = SessionMaker()
+    try:
+        yield db
+    finally:
+        await db.close()

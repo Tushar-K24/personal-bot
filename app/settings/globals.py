@@ -18,7 +18,7 @@ DB_PORT: int = config("DB_PORT", cast=int, default=5432)
 DB_ECHO: bool = config("DB_ECHO", cast=bool, default=True)
 
 DATABASE_CONFIG: DatabaseURL = DatabaseURL(
-    drivername="asyncpg",
+    drivername="postgresql+asyncpg",
     username=DB_USER,
     password=DB_PASSWORD,
     host=DB_HOST,
@@ -28,13 +28,16 @@ DATABASE_CONFIG: DatabaseURL = DatabaseURL(
 
 # A hack as field validator for url is not working, need fixing
 DATABASE_CONFIG.url = URL(
-    drivername="asyncpg",
+    drivername="postgresql+asyncpg",
     username=DB_USER,
     password=DB_PASSWORD,
     host=DB_HOST,
     port=DB_PORT,
     database=DATABASE,
+    query={}
 )
+
+
 
 REDIS_IP: str = config("REDIS_IP", cast=str, default="127.0.0.1")
 REDIS_PORT: int = config("REDIS_PORT", cast=int, default=6379)
