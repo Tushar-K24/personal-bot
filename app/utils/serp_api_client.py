@@ -1,29 +1,20 @@
-from serpapi import GoogleSearch
-
+from .http_client import HTTPClient
 from ..settings.globals import SERP_API_KEY
 
 
-class SerpAPI:
+class SerpAPI(HTTPClient):
+    url: str = "https://serpapi.com/search"
     __api_key: str = SERP_API_KEY
-    google_domain: str = "google.com"
 
     def __init__(self):
+        super().__init__()
         assert self.__api_key != "", f"{self.__class__.__name__}: api key missing"
 
-    def google_search(
-        self, searchText: str, location: str = "India", hl: str = "en", gl: str = "us"
+    async def google_search(
+        self, searchText: str, hl: str = "en", gl: str = "us"
     ) -> dict:
-        params: dict = {
-            "q": searchText,
-            "location": location,
-            "hl": hl,
-            "gl": gl,
-            "google_domain": self.google_domain,
-            "api_key": self.__api_key,
-        }
-        search = GoogleSearch(params)
-        results = search.get_dict()
-        return results
+        params: dict = {"q": searchText, "hl": hl, "gl": gl, "api_key": self.__api_key}
+        return await self.make_request("GET", self.url, params)
 
 
 client = SerpAPI()
