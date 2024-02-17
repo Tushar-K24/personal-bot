@@ -2,7 +2,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 from app.app import get_app
-from app.core.error_handler import AppException
+from app.core.exception_handler import AppException
 
 app = get_app()
 

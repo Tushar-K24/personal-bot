@@ -2,8 +2,8 @@ from unittest.mock import patch
 
 import pytest
 
-from app.services.api_a import mainmod as mainmod_a
-from app.services.api_b import mainmod as mainmod_b
+from app.services.api_a import service as mainmod_a
+from app.services.api_b import service as mainmod_b
 
 
 @pytest.fixture(scope="module")

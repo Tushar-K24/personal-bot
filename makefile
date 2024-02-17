@@ -91,3 +91,8 @@ kill-container: ## Stop the running docker container.
 .PHONY: run-local
 run-local: ## Run the app locally.
 	uvicorn app.main:app --port 5002 --reload
+
+.PHONY: remove-cache
+remove-cache: ## Remove pycache
+	@chmod +x ./scripts/remove_cache.sh
+	@./scripts/remove_cache.sh
