@@ -34,12 +34,13 @@ DATABASE_CONFIG.url = URL(
     host=DB_HOST,
     port=DB_PORT,
     database=DATABASE,
-    query={}
+    query={},
 )
-
 
 
 REDIS_IP: str = config("REDIS_IP", cast=str, default="127.0.0.1")
 REDIS_PORT: int = config("REDIS_PORT", cast=int, default=6379)
 
 SERP_API_KEY: str = config("SERP_API_KEY", cast=str, default="")
+
+SEARCH_HISTORY_PATH: str = config("SEARCH_HISTORY_PATH", cast=str, default="")
