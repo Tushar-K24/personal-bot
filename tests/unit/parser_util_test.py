@@ -13,5 +13,5 @@ def test_func_html_parser_with_exceptions():
     invalid_html_content = (
         "<html><body><p>This is an invalid HTML page<p></body></html>"
     )
-    with pytest.raises(Exception, match="HTML Parser:"):
+    with pytest.raises(Exception, match="HTML Parser -->"):
         html_parser(invalid_html_content)

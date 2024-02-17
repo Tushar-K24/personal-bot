@@ -25,4 +25,4 @@ def html_parser(html_page: str) -> str:
 
         return text_content
     except Exception as err:
-        raise Exception(f"HTML Parser: {err}")
+        raise Exception(f"HTML Parser --> {err}")

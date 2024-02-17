@@ -45,4 +45,4 @@ class HTTPClient:
                 kwargs["data"] = data
                 return kwargs
         except Exception as err:
-            raise Exception(f"{self.__class__.__name__}: {err}")
+            raise Exception(f"{self.__class__.__name__} --> {err}")

@@ -1,7 +1,16 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+
+from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers import load_routers
+from app.core.middleware import log_request_middleware
+from app.core.exception_handler import (
+    request_validation_exception_handler,
+    http_exception_handler,
+    unhandled_exception_handler,
+)
 
 
 def get_app() -> FastAPI:
@@ -14,6 +23,13 @@ def get_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.middleware("http")(log_request_middleware)
+    app.add_exception_handler(
+        RequestValidationError, request_validation_exception_handler
+    )
+    app.add_exception_handler(HTTPException, http_exception_handler)
+    app.add_exception_handler(Exception, unhandled_exception_handler)
 
     load_routers(app)
     return app
