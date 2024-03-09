@@ -8,7 +8,7 @@ from app.core import config
 
 @pytest.fixture(scope="module")
 def client():
-    from app.app import get_app
+    from app.utils.app import get_app
 
     with TestClient(get_app()) as client:
         yield client

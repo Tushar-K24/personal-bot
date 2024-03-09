@@ -23,5 +23,4 @@ class DatabaseURL(BaseModel):
         if isinstance(v, URL):
             return v
         args = {k: str(v) for k, v in info.data.items() if v is not None}
-        print(args)
         return URL(**args)

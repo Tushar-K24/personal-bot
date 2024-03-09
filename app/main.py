@@ -1,10 +1,12 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.app import get_app
+from app.routers import load_routers
+from app.utils.app import get_app
 from app.core.exception_handler import AppException
 
 app = get_app()
+load_routers(app)
 
 
 @app.exception_handler(AppException)
