@@ -44,3 +44,7 @@ REDIS_PORT: int = config("REDIS_PORT", cast=int, default=6379)
 SERP_API_KEY: str = config("SERP_API_KEY", cast=str, default="")
 
 SEARCH_HISTORY_PATH: str = config("SEARCH_HISTORY_PATH", cast=str, default="")
+
+DEFAULT_TITLE_URL: str = "https://www.youtube.com/"
+
+print(SEARCH_HISTORY_PATH)
