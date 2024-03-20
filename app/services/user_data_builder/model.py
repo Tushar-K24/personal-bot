@@ -27,7 +27,7 @@ class UserHistory(Base):
     __tablename__ = "user_history"
 
     header: Mapped[str] = mapped_column(String(30))
-    title: Mapped[str] = mapped_column(String(100))
+    title: Mapped[str] = mapped_column(String)
     titleUrl: Mapped[str] = mapped_column(String)
     time: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
     products: Mapped[List[str]] = mapped_column(ARRAY(String))

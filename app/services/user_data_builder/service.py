@@ -50,7 +50,6 @@ class UserDataBuilderService:
         url = subtitle["url"]
         _subtitle = await self.subtitle_repo.find({"url": url}, session=session)
         if len(_subtitle) == 0:
-            subtitle = SubtitleModel(**subtitle)
             _subtitle = await self.subtitle_repo.create(subtitle, session=session)
         return _subtitle[0]
 
@@ -84,9 +83,7 @@ class UserDataBuilderService:
             # ]
             # data["details"] = await asyncio.gather(*details_coroutines)
             # data["subtitles"] = await asyncio.gather(*subtitles_coroutines)
-            await self.user_history_repo.create(
-                UserHistoryModel(**data), session=session
-            )
+            await self.user_history_repo.create(data, session=session)
 
         except Exception as err:
             logger.error(f"gather_data --> {err}")

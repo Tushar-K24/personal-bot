@@ -17,8 +17,11 @@ class BaseRepository(ABC, Generic[Entity]):
         pass
 
     async def create(self, data: Union[Entity, List[Entity]], session: AsyncSession):
+        entity = self.getEntity()
         if not isinstance(data, List):
-            data = [data]
+            data = [entity(**data)]
+        else:
+            data = [entity(**d) for d in data]
         try:
             session.add_all(data)
             await session.commit()

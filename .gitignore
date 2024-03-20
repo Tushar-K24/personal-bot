@@ -143,3 +143,5 @@ volumes/*
 dockerfiles/*
 .github/*
 .vscode/*
+
+**/temp*
