@@ -1,9 +1,75 @@
 from typing import List
 
-from sqlalchemy import Column, Text, String, DateTime, ARRAY, Integer, ForeignKey, Table
+from sqlalchemy import (
+    Column,
+    Text,
+    String,
+    Boolean,
+    DateTime,
+    ARRAY,
+    Integer,
+    ForeignKey,
+    Table,
+)
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from app.models.orm import Base
+
+
+# youtube video data ------------------------------------------------------------------------------
+
+
+# TODO: if relationships doesn't create those attributes in the table, create them manually (with additional attributes)
+class YoutubeVideo(Base):
+    __tablename__ = "youtube_video"
+
+    title: Mapped[str] = mapped_column(String(100))  # youtube char limit for title
+    url: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(
+        String(5000)
+    )  # youtube char limit for description
+    category: Mapped[str] = mapped_column(String, index=True)
+    duration: Mapped[int] = mapped_column(Integer)  # video duration (in seconds)
+    keywords: Mapped[List[str]] = mapped_column(ARRAY(String))
+    uploaded_on: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
+    published_on: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
+    is_family_friendly: Mapped[bool] = mapped_column(Boolean)
+    requires_subscription: Mapped[bool] = mapped_column(Boolean)
+
+    creator: Mapped["Creator"] = relationship(back_populates="videos")
+
+    thumbnails: Mapped[List["Media"]] = relationship(
+        default=[], back_populates="thumbnail_for", cascade="all, delete-orphan"
+    )
+    video: Mapped["Media"] = relationship(
+        back_populates="video_for", cascade="all, delete-orphan"
+    )  # storage url of actual video
+
+
+class Media(Base):
+    __table__ = "media"
+
+    url: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    width: Mapped[int] = mapped_column(Integer, nullable=False)
+    height: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    thumbnail_for: Mapped["YoutubeVideo"] = relationship(
+        back_populates="thumbnails", single_parent=True
+    )
+    video_for: Mapped["YoutubeVideo"] = relationship(
+        back_populates="video", single_parent=True
+    )
+
+
+class Creator(Base):
+    __table__ = "creator"
+
+    url: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False, index=True)
+
+    videos: Mapped[List["YoutubeVideo"]] = relationship(
+        back_populates="creator", cascade="all, delete-orphan"
+    )
 
 
 # User History (Youtube Watch History For Now) ------------------------------------------------------
